@@ -13,13 +13,13 @@
 		<label for="in">in</label>
 		<br>
 		<label for="tool_diameter">Tool Diameter (mm or in):</label>
-		<input type="number" id="tool_diameter" name="tool_diameter" step="0.1" value="19.05">
+		<input type="number" id="tool_diameter" name="tool_diameter" step="0.01" value="19.05">
 		<br>
 		<label for="stock_size_x">Stock Size X (mm or in):</label>
-		<input type="number" id="stock_size_x" name="stock_size_x" step="1" value="100">
+		<input type="number" id="stock_size_x" name="stock_size_x" step=".001" value="100">
 		<br>
 		<label for="stock_size_y">Stock Size Y (mm or in):</label>
-		<input type="number" id="stock_size_y" name="stock_size_y" step="1" value="100">
+		<input type="number" id="stock_size_y" name="stock_size_y" step=".001" value="100">
 		<br>
 		<label for="feedrate">Feedrate (mm/min or in/min):</label>
 		<input type="number" id="feedrate" name="feedrate" step="1" value="2500">
@@ -28,10 +28,10 @@
 		<input type="number" id="spindle_speed" name="spindle_speed" step="1" value="12000">
 		<br>
 		<label for="depth_of_cut">Depth of Cut (mm or in):</label>
-		<input type="number" id="depth_of_cut" name="depth_of_cut" step="0.1" value="0.5">
+		<input type="number" id="depth_of_cut" name="depth_of_cut" step=".001" value="0.5">
 		<br>
 		<label for="max_depth">Maximum Depth (mm or in):</label>
-		<input type="number" id="max_depth" name="max_depth" step="1" value="2">
+		<input type="number" id="max_depth" name="max_depth" step=".001" value="2">
 		<br>
 		<label for="angle">Toolpath Direction:</label>
 		<input type="radio" id="angle_x" name="angle" value="x" checked>
@@ -127,7 +127,7 @@
 					}
 				}
 			
-			       gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Move to safe Z height after finishing
+			       gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height after finishing
 			   
 			
 			   gcode += "G0 X0 Y0\n"; // Move to origin
@@ -185,7 +185,7 @@
 					xZero = -stockSizeX / 2;
 					yZero = -stockSizeY / 2;
 				}
-				//return `G0 X${xZero.toFixed(2)} Y${yZero.toFixed(2)}\n`;
+				//return `G0 X${xZero.toFixed(3)} Y${yZero.toFixed(3)}\n`;
 			}
 			// Function to get the toolpath for positive cutting mode
 			function getCuttingToolpathPositive(angle, stockSizeX, stockSizeY, depthOfCut, feedrate) {
@@ -193,25 +193,25 @@
 				let gcode = "";
 				
 				for (currentDepth = 0; currentDepth < maxDepth; currentDepth += depthOfCut) {
-					gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Move to safe Z height
+					gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height
 					getRapidMoveToStartingPoint(xyZeroPoint, stockSizeX, stockSizeY);
-					gcode += `G0 X${xZero.toFixed(2)} Y${yZero.toFixed(2)}\n`// Rapid move to starting point
+					gcode += `G0 X${xZero.toFixed(3)} Y${yZero.toFixed(3)}\n`// Rapid move to starting point
 					 
 					if(currentDepth + depthOfCut <= maxDepth)
-						gcode += `G1 Z${(0-currentDepth - depthOfCut).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+						gcode += `G1 Z${(0-currentDepth - depthOfCut).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 					else
-						gcode += `G1 Z${(0 - maxDepth).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+						gcode += `G1 Z${(0 - maxDepth).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 						
 					for(let x = xZero; x <= stockSizeX+xZero; x += stepover) {
-						gcode += `G1 Y${(stockSizeY+yZero).toFixed(2)} F${feedrate}\n`; // Cut along Y
-						gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Retract
+						gcode += `G1 Y${(stockSizeY+yZero).toFixed(3)} F${feedrate}\n`; // Cut along Y
+						gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Retract
 						if(x + stepover < stockSizeX+xZero)
 						{
-							gcode += `G0 X${(x + stepover).toFixed(2)} Y${yZero.toFixed(2)}\n`; // Move over on X
+							gcode += `G0 X${(x + stepover).toFixed(3)} Y${yZero.toFixed(3)}\n`; // Move over on X
 							if(currentDepth + depthOfCut <= maxDepth)
-								gcode += `G1 Z${(0-currentDepth - depthOfCut).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+								gcode += `G1 Z${(0-currentDepth - depthOfCut).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 							else
-								gcode += `G1 Z${(0 - maxDepth).toFixed(2)} F${feedrate}\n`; // Plunge to depth				
+								gcode += `G1 Z${(0 - maxDepth).toFixed(3)} F${feedrate}\n`; // Plunge to depth				
 						}
 					}
 				}
@@ -223,24 +223,24 @@
 				let gcode = "";
 				
 				for (currentDepth = 0; currentDepth < maxDepth; currentDepth += depthOfCut) {
-					gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Move to safe Z height
+					gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height
 					getRapidMoveToStartingPoint(xyZeroPoint, stockSizeX, stockSizeY);
-					gcode +=  `G0 X${(stockSizeX+xZero).toFixed(2)} Y${(stockSizeY+yZero).toFixed(2)}\n`// Rapid move to starting point
+					gcode +=  `G0 X${(stockSizeX+xZero).toFixed(3)} Y${(stockSizeY+yZero).toFixed(3)}\n`// Rapid move to starting point
 					if(currentDepth + depthOfCut <= maxDepth)
-						gcode += `G1 Z${(0-currentDepth - depthOfCut).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+						gcode += `G1 Z${(0-currentDepth - depthOfCut).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 					else
-						gcode += `G1 Z${(0 - maxDepth).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+						gcode += `G1 Z${(0 - maxDepth).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 						
 					for(let x = stockSizeX+xZero; x >= xZero; x -= stepover) {
-						gcode += `G1 Y${(yZero).toFixed(2)} F${feedrate}\n`; // Cut along Y
-						gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Retract
+						gcode += `G1 Y${(yZero).toFixed(3)} F${feedrate}\n`; // Cut along Y
+						gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Retract
 						if(x - stepover > xZero)
 						{
-							gcode += `G0 X${(x - stepover).toFixed(2)} Y${(stockSizeY+yZero).toFixed(2)}\n`; // Move over on X
+							gcode += `G0 X${(x - stepover).toFixed(3)} Y${(stockSizeY+yZero).toFixed(3)}\n`; // Move over on X
 							if(currentDepth + depthOfCut <= maxDepth)
-								gcode += `G1 Z${(0-currentDepth - depthOfCut).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+								gcode += `G1 Z${(0-currentDepth - depthOfCut).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 							else
-								gcode += `G1 Z${(0 - maxDepth).toFixed(2)} F${feedrate}\n`; // Plunge to depth				
+								gcode += `G1 Z${(0 - maxDepth).toFixed(3)} F${feedrate}\n`; // Plunge to depth				
 						}
 					}
 				}
@@ -251,26 +251,26 @@
 				let gcode = "";
 				
 				for (currentDepth = 0; currentDepth < maxDepth; currentDepth += depthOfCut) {
-					gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Move to safe Z height
+					gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height
 					getRapidMoveToStartingPoint(xyZeroPoint, stockSizeX, stockSizeY);
-					gcode +=  `G0 X${(xZero).toFixed(2)} Y${(yZero).toFixed(2)}\n`// Rapid move to starting point
+					gcode +=  `G0 X${(xZero).toFixed(3)} Y${(yZero).toFixed(3)}\n`// Rapid move to starting point
 					if(currentDepth + depthOfCut <= maxDepth)
-						gcode += `G1 Z${(0-currentDepth - depthOfCut).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+						gcode += `G1 Z${(0-currentDepth - depthOfCut).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 					else
-						gcode += `G1 Z${(0 - maxDepth).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+						gcode += `G1 Z${(0 - maxDepth).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 						
 					for(let x = xZero; x <= stockSizeX; x += stepover) {
-						gcode += `G1 Y${(stockSizeY+yZero).toFixed(2)} F${feedrate}\n`; // Cut along Y
+						gcode += `G1 Y${(stockSizeY+yZero).toFixed(3)} F${feedrate}\n`; // Cut along Y
 						if(x + stepover < stockSizeX)
 						{							
-							gcode += `G1 X${(x + stepover).toFixed(2)}\n`; // Move over on X
+							gcode += `G1 X${(x + stepover).toFixed(3)}\n`; // Move over on X
 			
 						}
-						gcode += `G1 Y${(yZero).toFixed(2)} F${feedrate}\n`; // Cut along Y
+						gcode += `G1 Y${(yZero).toFixed(3)} F${feedrate}\n`; // Cut along Y
 						x += stepover;
 						if(x + (stepover) < stockSizeX)
 						{							
-							gcode += `G1 X${(x + (stepover)).toFixed(2)}\n`; // Move over on X
+							gcode += `G1 X${(x + (stepover)).toFixed(3)}\n`; // Move over on X
 			
 						}
 					}
@@ -286,24 +286,24 @@
 			     let gcode = "";
 			
 			     for (currentDepth = 0; currentDepth < maxDepth; currentDepth += depthOfCut) {
-			         gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Move to safe Z height
+			         gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height
 			         getRapidMoveToStartingPoint(xyZeroPoint, stockSizeX, stockSizeY);
-			         gcode += `G0 X${xZero.toFixed(2)} Y${yZero.toFixed(2)}\n`; // Rapid move to starting point
+			         gcode += `G0 X${xZero.toFixed(3)} Y${yZero.toFixed(3)}\n`; // Rapid move to starting point
 			
 			         if (currentDepth + depthOfCut <= maxDepth)
-			             gcode += `G1 Z${(0 - currentDepth - depthOfCut).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+			             gcode += `G1 Z${(0 - currentDepth - depthOfCut).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 			         else
-			             gcode += `G1 Z${(0 - maxDepth).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+			             gcode += `G1 Z${(0 - maxDepth).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 			
 			         for (let y = yZero; y <= stockSizeY + yZero; y += stepover) {
-			             gcode += `G1 X${(stockSizeX + xZero).toFixed(2)} F${feedrate}\n`; // Cut along X
-			             gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Retract
+			             gcode += `G1 X${(stockSizeX + xZero).toFixed(3)} F${feedrate}\n`; // Cut along X
+			             gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Retract
 			             if (y + stepover < stockSizeY + yZero) {
-			                 gcode += `G0 Y${(y + stepover).toFixed(2)} X${xZero.toFixed(2)}\n`; // Move over on Y
+			                 gcode += `G0 Y${(y + stepover).toFixed(3)} X${xZero.toFixed(3)}\n`; // Move over on Y
 			                 if (currentDepth + depthOfCut <= maxDepth)
-			                     gcode += `G1 Z${(0 - currentDepth - depthOfCut).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+			                     gcode += `G1 Z${(0 - currentDepth - depthOfCut).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 			                 else
-			                     gcode += `G1 Z${(0 - maxDepth).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+			                     gcode += `G1 Z${(0 - maxDepth).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 			             }
 			         }
 			     }
@@ -316,23 +316,23 @@
 			     let gcode = "";
 			
 			     for (currentDepth = 0; currentDepth < maxDepth; currentDepth += depthOfCut) {
-			         gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Move to safe Z height
+			         gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height
 			         getRapidMoveToStartingPoint(xyZeroPoint, stockSizeX, stockSizeY);
-			         gcode += `G0 X${(stockSizeX + xZero).toFixed(2)} Y${(stockSizeY + yZero).toFixed(2)}\n`; // Rapid move to starting point
+			         gcode += `G0 X${(stockSizeX + xZero).toFixed(3)} Y${(stockSizeY + yZero).toFixed(3)}\n`; // Rapid move to starting point
 			         if (currentDepth + depthOfCut <= maxDepth)
-			             gcode += `G1 Z${(0 - currentDepth - depthOfCut).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+			             gcode += `G1 Z${(0 - currentDepth - depthOfCut).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 			         else
-			             gcode += `G1 Z${(0 - maxDepth).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+			             gcode += `G1 Z${(0 - maxDepth).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 			
 			         for (let y = stockSizeY + yZero; y >= yZero; y -= stepover) {
-			             gcode += `G1 X${xZero.toFixed(2)} Y${(y - stepover).toFixed(2)} F${feedrate}\n`; // Cut along X
-			             gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Retract
+			             gcode += `G1 X${xZero.toFixed(3)} Y${(y - stepover).toFixed(3)} F${feedrate}\n`; // Cut along X
+			             gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Retract
 			             if (y - stepover > yZero) {
-			                 gcode += `G0 Y${(y - stepover).toFixed(2)} X${(stockSizeX + xZero).toFixed(2)}\n`; // Move over on Y
+			                 gcode += `G0 Y${(y - stepover).toFixed(3)} X${(stockSizeX + xZero).toFixed(3)}\n`; // Move over on Y
 			                 if (currentDepth + depthOfCut <= maxDepth)
-			                     gcode += `G1 Z${(0 - currentDepth - depthOfCut).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+			                     gcode += `G1 Z${(0 - currentDepth - depthOfCut).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 			                 else
-			                     gcode += `G1 Z${(0 - maxDepth).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+			                     gcode += `G1 Z${(0 - maxDepth).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 			             }
 			         }
 			     }
@@ -344,23 +344,23 @@
 			     let gcode = "";
 			
 			     for (currentDepth = 0; currentDepth < maxDepth; currentDepth += depthOfCut) {
-			         gcode += `G0 Z${retractHeight.toFixed(2)}\n`; // Move to safe Z height
+			         gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height
 			         getRapidMoveToStartingPoint(xyZeroPoint, stockSizeX, stockSizeY);
-			         gcode += `G0 X${xZero.toFixed(2)} Y${yZero.toFixed(2)}\n`; // Rapid move to starting point
+			         gcode += `G0 X${xZero.toFixed(3)} Y${yZero.toFixed(3)}\n`; // Rapid move to starting point
 			         if (currentDepth + depthOfCut <= maxDepth)
-			             gcode += `G1 Z${(0 - currentDepth - depthOfCut).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+			             gcode += `G1 Z${(0 - currentDepth - depthOfCut).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 			         else
-			             gcode += `G1 Z${(0 - maxDepth).toFixed(2)} F${feedrate}\n`; // Plunge to depth
+			             gcode += `G1 Z${(0 - maxDepth).toFixed(3)} F${feedrate}\n`; // Plunge to depth
 			
 			         for (let y = yZero; y <= stockSizeY; y += stepover) {
-			             gcode += `G1 X${(stockSizeX + xZero).toFixed(2)} F${feedrate}\n`; // Cut along X
+			             gcode += `G1 X${(stockSizeX + xZero).toFixed(3)} F${feedrate}\n`; // Cut along X
 			             if (y + stepover < stockSizeY) {
-			                 gcode += `G1 Y${(y + stepover).toFixed(2)}\n`; // Move over on Y
+			                 gcode += `G1 Y${(y + stepover).toFixed(3)}\n`; // Move over on Y
 			             }
-			             gcode += `G1 X${xZero.toFixed(2)}F${feedrate}\n`; // Move back on X
+			             gcode += `G1 X${xZero.toFixed(3)}F${feedrate}\n`; // Move back on X
 				y += stepover;
 			             if (y + stepover < stockSizeY) {
-			                 gcode += `G0 Y${(y + stepover).toFixed(2)}\n`; // Move over on Y
+			                 gcode += `G0 Y${(y + stepover).toFixed(3)}\n`; // Move over on Y
 			                 
 			             }
 			         }
