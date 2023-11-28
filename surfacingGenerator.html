@@ -27,7 +27,7 @@
 		<label for="spindle_speed">Spindle Speed (RPM):</label>
 		<input type="number" id="spindle_speed" name="spindle_speed" step="1" value="12000">
 		<br>
-		<label for="depth_of_cut">Depth of Cut (mm or in):</label>
+		<label for="depth_of_cut">Depth of Cut / Depth per Pass (mm or in):</label>
 		<input type="number" id="depth_of_cut" name="depth_of_cut" step=".001" value="0.5">
 		<br>
 		<label for="max_depth">Maximum Depth (mm or in):</label>
@@ -79,8 +79,20 @@
 			// Declare global variables
 			   let toolDiameter, stockSizeX, stockSizeY, feedrate, spindleSpeed, depthOfCut, maxDepth, currentDepth, angle, xyZeroPoint, cuttingMode, stepoverPercentage, units;
 			   let xZero, yZero;
-			//Code by Neil Ferreri			
-			// Function to generate the G-Code for surfacing
+			//Code by Neil Ferreri
+
+			//Function to clear the gcode output
+			function clearGCode() {
+				const gcodeOutput = document.getElementById("gcodeOutput");
+				gcodeOutput.value = "";
+				// Hide the copy and download buttons
+				const copyButton = document.getElementById("copyButton");
+				copyButton.style.display = "none";
+				const downloadButton = document.getElementById("downloadButton");
+				downloadButton.style.display = "none";
+			}	
+
+			//Function to generate the G-Code for surfacing
 			function generateGCode() {
 				// Get the input values
 				toolDiameter = parseFloat(document.getElementById("tool_diameter").value);
@@ -97,7 +109,7 @@
 				retractHeight = parseFloat(document.getElementById("retract_height").value);
 				units = document.querySelector('input[name="units"]:checked').value;
 				
-				
+				clearGCode();
 				
 				
 				// Initialize the G-Code
@@ -367,6 +379,11 @@
 			     }
 			     return gcode;
 			 }
+
+			 // Clear the gcode output on input change
+			 document.querySelectorAll('input').forEach(input => {
+				input.addEventListener('input', clearGCode);
+			 });
 			
 			
 		</script>
