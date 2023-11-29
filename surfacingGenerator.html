@@ -116,6 +116,9 @@
 			   let gcode = "";
 			   gcode += "G90\n"; // Absolute positioning
 			   gcode += `G${units === "in" ? 20 : 21}\n`; // Units in mm or inches
+
+			   gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height
+			   gcode += `M3 S${feedrate.toFixed(0)}\n`;	// Start Spindle at defined feedrate
 			
 			   // Loop over the depth of cut until reaching maxDepth
 			   
@@ -139,8 +142,9 @@
 					}
 				}
 			
-			       gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height after finishing
-			   
+			   gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height after finishing
+
+			   gcode += "M5\n"; //Stop Spindle			   
 			
 			   gcode += "G0 X0 Y0\n"; // Move to origin
 			
