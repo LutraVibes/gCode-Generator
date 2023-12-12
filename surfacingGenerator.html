@@ -118,7 +118,7 @@
 			   gcode += `G${units === "in" ? 20 : 21}\n`; // Units in mm or inches
 
 			   gcode += `G0 Z${retractHeight.toFixed(3)}\n`; // Move to safe Z height
-			   gcode += `M3 S${feedrate.toFixed(0)}\n`;	// Start Spindle at defined feedrate
+			   gcode += `M3 S${spindleSpeed.toFixed(0)}\n`;	// Start Spindle at defined speed
 			
 			   // Loop over the depth of cut until reaching maxDepth
 			   
