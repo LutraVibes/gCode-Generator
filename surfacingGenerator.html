@@ -5,7 +5,7 @@
 	</head>
 	<body>
 		<h1>Surfacing G-Code Generator</h1>
-		<br>
+		<br>		
 		<label for="units">Units:</label>
 		<input type="radio" id="mm" name="units" value="mm" checked>
 		<label for="mm">mm</label>
@@ -13,25 +13,25 @@
 		<label for="in">in</label>
 		<br>
 		<label for="tool_diameter">Tool Diameter (mm or in):</label>
-		<input type="number" id="tool_diameter" name="tool_diameter" step="0.01" value="19.05">
+		<input type="number" id="tool_diameter" name="tool_diameter" step="0.01" value="19.05" min="0" required>
 		<br>
 		<label for="stock_size_x">Stock Size X (mm or in):</label>
-		<input type="number" id="stock_size_x" name="stock_size_x" step=".001" value="100">
+		<input type="number" id="stock_size_x" name="stock_size_x" step=".001" value="100" min="0" required>
 		<br>
 		<label for="stock_size_y">Stock Size Y (mm or in):</label>
-		<input type="number" id="stock_size_y" name="stock_size_y" step=".001" value="100">
+		<input type="number" id="stock_size_y" name="stock_size_y" step=".001" value="100" min="0" required>
 		<br>
 		<label for="feedrate">Feedrate (mm/min or in/min):</label>
-		<input type="number" id="feedrate" name="feedrate" step="1" value="2500">
+		<input type="number" id="feedrate" name="feedrate" step="1" value="2500" min="0" required>
 		<br>
 		<label for="spindle_speed">Spindle Speed (RPM):</label>
-		<input type="number" id="spindle_speed" name="spindle_speed" step="1" value="12000">
+		<input type="number" id="spindle_speed" name="spindle_speed" step="1" value="12000" min="0" required>
 		<br>
 		<label for="depth_of_cut">Depth of Cut / Depth per Pass (mm or in):</label>
-		<input type="number" id="depth_of_cut" name="depth_of_cut" step=".001" value="0.5">
+		<input type="number" id="depth_of_cut" name="depth_of_cut" step=".001" value="0.5" min="0" required>
 		<br>
 		<label for="max_depth">Maximum Depth (mm or in):</label>
-		<input type="number" id="max_depth" name="max_depth" step=".001" value="2">
+		<input type="number" id="max_depth" name="max_depth" step=".001" value="2" min="0" required>
 		<br>
 		<label for="angle">Toolpath Direction:</label>
 		<input type="radio" id="angle_x" name="angle" value="x" checked>
@@ -66,7 +66,7 @@
 		<input type="number" id="retract_height" name="retract_height" step="1" value="10">
 		<br>
 		<br>
-		<button onclick="generateGCode()">Generate G-Code</button>
+		<button onclick="generateGCode()">Generate G-Code</button>		
 		<br>
 		<label for="gcodeOutput">G-Code:</label>
 		<textarea id="gcodeOutput" name="gcodeOutput" rows="10" cols="50" readonly></textarea>
@@ -110,6 +110,18 @@
 				units = document.querySelector('input[name="units"]:checked').value;
 				
 				clearGCode();
+				
+				//Check values are positive 
+				if (toolDiameter <= 0 || stockSizeX <= 0 || stockSizeY <= 0 || feedrate <= 0 || spindleSpeed < 0 || depthOfCut <= 0 || maxDepth <= 0 || stepoverPercentage <= 0) {
+					alert('Please enter positive values for all parameters.');
+					return;
+					}
+
+				//Check that maximum depth is not < DOC
+				if (maxDepth < depthOfCut) {
+					alert('Maximum depth should be greater than or equal to the depth of cut.');
+					return;
+					}
 				
 				
 				// Initialize the G-Code
